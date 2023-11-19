@@ -1,85 +1,80 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
+import { ref } from 'vue'
+import { useModalStore } from './stores/modal'
+import TextInput from '@/components/TextInput.vue'
+const store = useModalStore()
+
+const name = ref('')
+console.log(name)
+
+console.log(store.modalIsOpen)
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
-    </div>
+  <header class="header">
+    <button @click="store.openModal()" class="button">Konfiguracja</button>
   </header>
-
   <RouterView />
+  <h2>{{ store.modalIsOpen }}</h2>
+
+  <transition name="modal">
+    <modal class="modal" v-if="store.modalIsOpen">
+      <div class="modal-container">
+        <div>
+          <form action=""></form>
+          <TextInput label="Imię" modelValue="name" />
+          <button type="submit">Save</button>
+        </div>
+        <button @click="store.closeModal()">Close button</button>
+      </div>
+    </modal>
+  </transition>
 </template>
 
 <style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
-}
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-nav {
+.header {
   width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  justify-items: center;
+  padding: 0.75rem 1.25rem;
+  background: rgb(2, 0, 36);
+  background: linear-gradient(
+    90deg,
+    rgba(2, 0, 36, 1) 0%,
+    rgba(9, 9, 121, 0.9878545168067226) 35%,
+    rgba(0, 212, 255, 1) 100%
+  );
 }
 
-nav a.router-link-exact-active {
-  color: var(--color-text);
+.button {
+  grid-column: 3/4;
+  padding: 0.75rem 1.25rem;
+  border-radius: 8px;
+  background-color: #fff;
+  justify-self: end;
+  border: 1px solid rgba(9, 9, 121, 0.9878545168067226) 1;
 }
 
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
+.modal {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5rem;
 }
 
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
+.modal-container {
+  width: 100%;
+  height: 100%;
+  background-color: #fff;
+  padding: 2rem;
+  border-radius: 30px;
+  border: 1px solid rgba(9, 9, 121, 0.9878545168067226);
 }
 </style>
