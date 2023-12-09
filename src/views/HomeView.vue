@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { useParticipantsStore } from '@/store/participants'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 const participantsStore = useParticipantsStore()
 
-const items = ref([...participantsStore.participantsList])
+const participants = computed(() => participantsStore.participantsList)
+
 const moveToTop = ref(false)
 const moveToBottom = ref(false)
 const currentIndex = ref(0)
@@ -14,8 +15,9 @@ const sortFunction = (item: any) => {
 
 const animateElement = () => {
   console.log(participantsStore.participantsList)
+  console.log(currentIndex.value)
   if (!moveToTop.value || !moveToBottom.value) {
-    sortFunction(items.value[currentIndex.value])
+    sortFunction(participants.value[currentIndex.value])
       ? (moveToTop.value = true)
       : (moveToBottom.value = true)
 
@@ -36,7 +38,7 @@ const animateElement = () => {
     <div class="box first-category"></div>
     <div class="box second-category"></div>
     <div
-      v-for="(item, index) in items"
+      v-for="(item, index) in participants"
       :key="index"
       :class="{
         moveTop: moveToTop && currentIndex === index,
@@ -75,25 +77,29 @@ const animateElement = () => {
   left: 50%;
   top: 50%;
   transform: translateY(-50%);
+  z-index: 2;
 }
 
 .first-category {
   right: 10px;
   top: 10px;
+  z-index: 2;
 }
 
 .second-category {
   right: 10px;
   bottom: 10px;
+  z-index: 2;
 }
 
 .movingBox {
-  width: 100px; /* Adjust the width of the box */
-  height: 100px; /* Adjust the height of the box */
-  background-color: #3498db; /* Set your desired background color */
+  width: 100px;
+  height: 100px;
+  background-color: #3498db;
   position: absolute;
-  top: 50%; /* Center the box vertically */
+  top: 50%;
   transform: translateY(-50%);
+  margin-left: 2rem;
 }
 
 .moveTop {
@@ -108,29 +114,29 @@ const animateElement = () => {
 }
 @keyframes sortTop {
   40% {
-    transform: translate(700px, -50%);
+    transform: translate(900%, -50%);
   }
 
   60% {
-    transform: translate(700px, -400px);
+    transform: translate(900%, -400px);
   }
 
   100% {
-    transform: translate(1200px, -400px);
+    transform: translate(1600%, -400px);
   }
 }
 
 @keyframes sortBottom {
   40% {
-    transform: translate(700px, -50%);
+    transform: translate(900%, -50%);
   }
 
   60% {
-    transform: translate(700px, 300px);
+    transform: translate(900%, 300px);
   }
 
   100% {
-    transform: translate(1200px, 300px);
+    transform: translate(1600%, 300px);
   }
 }
 </style>

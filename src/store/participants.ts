@@ -1,9 +1,10 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
-interface Participant {
+export interface Participant {
   id: string
   name: string
+  age: number
 }
 
 export const useParticipantsStore = defineStore('participants', () => {

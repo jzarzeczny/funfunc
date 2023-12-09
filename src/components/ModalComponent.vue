@@ -1,22 +1,42 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useModalStore } from '@/store/modal'
-import { useParticipantsStore } from '@/store/participants'
+import { useParticipantsStore, type Participant } from '@/store/participants'
 import { generateRandomID } from '@/utils'
+import { femaleNamesList } from '@/utils/femaleNames'
 
 const store = useModalStore()
 const participantsStore = useParticipantsStore()
 const formData = ref({
-  name: ''
+  name: '',
+  age: ''
 })
 const submitForm = () => {
-  participantsStore.addParticipant({ id: generateRandomID(), name: formData.value.name })
+  participantsStore.addParticipant({
+    id: generateRandomID(),
+    name: formData.value.name,
+    age: parseInt(formData.value.age)
+  })
   formData.value.name = ''
+  formData.value.age = ''
 }
+
+const configurationObject = {
+  gender: {
+    labelTop: 'Chłopopcy',
+    labelBottom: 'Dziewczynki',
+    dataType: 'string',
+    sortFunction: (data: Participant) => femaleNamesList.includes(data.name)
+  }
+}
+
+console.log(configurationObject)
+
+const submitSetup = () => {}
 </script>
 
 <template>
-  <modal class="modal" v-if="store.modalIsOpen">
+  <div class="modal" v-if="store.modalIsOpen">
     <div class="modal-container">
       <button class="button close-button" @click="store.closeModal()">Close</button>
 
@@ -26,6 +46,10 @@ const submitForm = () => {
           <label for="name">Imię</label>
           <input id="name" v-model="formData.name" />
         </div>
+        <div class="form-control">
+          <label for="age">Wiek</label>
+          <input id="age" v-model="formData.age" />
+        </div>
         <button class="button submit-button" type="submit">Dodaj</button>
       </form>
 
@@ -33,12 +57,18 @@ const submitForm = () => {
         <h2>Uczestnicy</h2>
         <ul>
           <li v-for="item in participantsStore.participantsList" :key="item.id">
-            {{ item.name }}
+            {{ item.name }} {{ item.age }}
           </li>
         </ul>
       </div>
+      <div class="setup-container">
+        <h2>Ustawienia</h2>
+        <form class="form" @submit.prevent="submitSetup">
+          label top label bottom name age => data type dynamic form
+        </form>
+      </div>
     </div>
-  </modal>
+  </div>
 </template>
 
 <style scoped lang="scss">
@@ -53,6 +83,7 @@ const submitForm = () => {
   align-items: center;
   justify-content: center;
   padding: 5rem;
+  z-index: 3;
 }
 
 .modal-container {
@@ -97,7 +128,19 @@ const submitForm = () => {
 }
 
 .list-container {
+  grid-column: 2/3;
+  grid-row: 2/3;
+  ul {
+    overflow: scroll;
+  }
+  li {
+    padding: 0.5rem;
+    width: 250px;
+  }
+}
+
+.setup-container {
   grid-column: 3/4;
-  grid-row: 1/2;
+  grid-row: 1/3;
 }
 </style>
