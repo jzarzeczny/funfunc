@@ -2,12 +2,12 @@
 import { useModalStore } from './store/modal'
 import ModalComponent from '@/components/ModalComponent.vue'
 
-const store = useModalStore()
+const modalStore = useModalStore()
 </script>
 
 <template>
   <header class="header">
-    <button @click="store.openModal()" class="button">Konfiguracja</button>
+    <button @click="modalStore.openModal()" class="button">Konfiguracja</button>
   </header>
   <RouterView />
 

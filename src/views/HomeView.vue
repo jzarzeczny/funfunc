@@ -1,23 +1,26 @@
 <script setup lang="ts">
+import { useModalStore } from '@/store/modal'
 import { useParticipantsStore } from '@/store/participants'
+import { useSetupStore } from '@/store/setup'
 import { computed, ref } from 'vue'
 const participantsStore = useParticipantsStore()
+const setupStore = useSetupStore()
+const modalStore = useModalStore()
 
 const participants = computed(() => participantsStore.participantsList)
+const setup = computed(() => setupStore.setup)
+
+if (!setup.value) {
+  modalStore.openModal()
+}
 
 const moveToTop = ref(false)
 const moveToBottom = ref(false)
 const currentIndex = ref(0)
 
-const sortFunction = (item: any) => {
-  return item === 'a'
-}
-
 const animateElement = () => {
-  console.log(participantsStore.participantsList)
-  console.log(currentIndex.value)
   if (!moveToTop.value || !moveToBottom.value) {
-    sortFunction(participants.value[currentIndex.value])
+    setupStore.setup?.sortFunction(participants.value[currentIndex.value])
       ? (moveToTop.value = true)
       : (moveToBottom.value = true)
 
@@ -32,7 +35,7 @@ const animateElement = () => {
 
 <template>
   <div class="container">
-    <button @click="animateElement" class="button">Start</button>
+    <button v-if="setup" @click="animateElement" class="button">Start</button>
     <div class="box start-box"></div>
     <div class="box sorter"></div>
     <div class="box first-category"></div>
@@ -103,7 +106,7 @@ const animateElement = () => {
 }
 
 .moveTop {
-  animation: sortTop 10s linear forwards; /* Adjust the duration of the animation */
+  animation: sortTop 10s linear forwards;
 }
 
 .moveBottom {
@@ -114,29 +117,29 @@ const animateElement = () => {
 }
 @keyframes sortTop {
   40% {
-    transform: translate(900%, -50%);
+    transform: translate(1000%, -50%);
   }
 
   60% {
-    transform: translate(900%, -400px);
+    transform: translate(1000%, -400px);
   }
 
   100% {
-    transform: translate(1600%, -400px);
+    transform: translate(1800%, -400px);
   }
 }
 
 @keyframes sortBottom {
   40% {
-    transform: translate(900%, -50%);
+    transform: translate(1000%, -50%);
   }
 
   60% {
-    transform: translate(900%, 300px);
+    transform: translate(1000%, 300px);
   }
 
   100% {
-    transform: translate(1600%, 300px);
+    transform: translate(1800%, 300px);
   }
 }
 </style>

@@ -4,13 +4,20 @@ import { useModalStore } from '@/store/modal'
 import { useParticipantsStore, type Participant } from '@/store/participants'
 import { generateRandomID } from '@/utils'
 import { femaleNamesList } from '@/utils/femaleNames'
+import { useSetupStore, type Setup } from '@/store/setup'
 
 const store = useModalStore()
 const participantsStore = useParticipantsStore()
+const setupStore = useSetupStore()
 const formData = ref({
   name: '',
   age: ''
 })
+
+const settingData = ref({
+  setupKey: ''
+})
+
 const submitForm = () => {
   participantsStore.addParticipant({
     id: generateRandomID(),
@@ -21,18 +28,19 @@ const submitForm = () => {
   formData.value.age = ''
 }
 
-const configurationObject = {
+const configurationObject: { [key: string]: Setup } = {
   gender: {
-    labelTop: 'Chłopopcy',
-    labelBottom: 'Dziewczynki',
+    labelTop: 'Dziewczynki',
+    labelBottom: 'Chłopcy',
     dataType: 'string',
-    sortFunction: (data: Participant) => femaleNamesList.includes(data.name)
+    sortFunction: (data: Participant) => femaleNamesList.includes(data.name),
+    icon: 'bi-gender-ambiguous'
   }
 }
 
-console.log(configurationObject)
-
-const submitSetup = () => {}
+const submitSetup = () => {
+  setupStore.setSetup(configurationObject[settingData.value.setupKey])
+}
 </script>
 
 <template>
@@ -57,14 +65,18 @@ const submitSetup = () => {}
         <h2>Uczestnicy</h2>
         <ul>
           <li v-for="item in participantsStore.participantsList" :key="item.id">
-            {{ item.name }} {{ item.age }}
+            {{ item.name }} | {{ item.age }}
           </li>
         </ul>
       </div>
       <div class="setup-container">
         <h2>Ustawienia</h2>
         <form class="form" @submit.prevent="submitSetup">
-          label top label bottom name age => data type dynamic form
+          <div v-for="(setting, key) in configurationObject" v-bind:key="key">
+            <input type="radio" :id="key as string" :value="key" v-model="settingData.setupKey" />
+            <label :for="key as string"><v-icon :name="setting.icon" /></label>
+          </div>
+          <button class="button submit-button" type="submit">Dodaj</button>
         </form>
       </div>
     </div>
